@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> CODE BY SKY </title>
+    <link rel="icon" type="image/x-icon" href="kurur.jpg">
+    <script src="quiz_data.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #34495e;
+            --accent-color: #2980b9;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
+            --hint-color: #f39c12;
+            --bg-color: #f5f6fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.05rem;
+        }
+
+        .checkbox-item:hover {
+            background: #edf2f7;
+        }
+
+        .checkbox-item input {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .quiz-category {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .btn-hint {
+            background-color: transparent;
+            color: var(--hint-color);
+            border: 1px dashed var(--hint-color);
+            padding: 8px 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .explanation-box {
+            background-color: #fffde7;
+            border: 1px solid #fff59d;
+            color: #f57f17;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 22px;
+            line-height: 1.4;
+        }
+
+        .explanation-box.checked-info {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 1.05rem;
+            cursor: pointer;
+            color: var(--text-color);
+            width: 100%;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #f1f2f6;
+        }
+
+        .option-btn.selected {
+            border-color: var(--accent-color);
+            background-color: #e3f2fd;
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success-color) !important;
+            color: #155724 !important;
+            font-weight: bold;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--error-color) !important;
+            color: #721c24 !important;
+        }
+
+        .action-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-blue { background-color: var(--accent-color); color: white; }
+        .btn-gray { background-color: #7f8c8d; color: white; }
+
+        .score-text {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .hidden { display: none !important; }
+        h1 {
+    display: flex;
+    align-items: center;       /* Căn giữa chữ và icon theo chiều dọc */
+    justify-content: center;    /* Căn giữa toàn bộ tiêu đề ra giữa màn hình */
+    gap: 20px;                 /* Khoảng cách vừa phải giữa chữ và icon */
+    text-align: center;
+    margin: 20px 0;            /* Tạo khoảng cách trên dưới cho tiêu đề thoáng hơn */
+}
+
+.gif-icon {
+    width: 60px;               /* Thu nhỏ chiều rộng icon lại cho cân đối */
+    height: 60px;              /* Thu nhỏ chiều cao icon */
+    object-fit: contain;       /* Giữ nguyên tỷ lệ nhân vật, không bị méo hay mất góc */
+    display: inline-block;
+     border-radius: 8px;  
+}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>
+    <video src="evernight.mp4" class="gif-icon" autoplay loop muted playsinline></video>
+    Trắc Nghiệm Tiếng Anh
+    <video src="evernight.mp4" class="gif-icon" autoplay loop muted playsinline></video>
+</h1>
+
+    <div id="stepSelectCategory" class="card">
+        <div class="step-title">Chọn các loại nội dung muốn làm bài:</div>
+        <div class="checkbox-group" id="filterContainer"></div>
+        <button class="btn btn-blue" onclick="startQuiz()">BẮT ĐẦU LÀM BÀI</button>
+    </div>
+
+    <div id="stepShowQuiz" class="card hidden">
+        <div class="quiz-header">
+            <span id="quizCategoryTag" class="quiz-category">-</span>
+            <button class="btn btn-gray" style="padding: 6px 12px; font-size: 0.85rem; flex: none;" onclick="backToSelect()">Quay lại</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+            <span id="progressText">Câu hỏi: 0/0</span>
+        </div>
+
+        <div id="questionText" class="question-text">Đang tải câu hỏi...</div>
+
+        <div>
+            <button id="btnToggleHint" class="btn-hint" onclick="toggleHint()">💡 Xem gợi ý</button>
+        </div>
+
+        <div id="explanationBox" class="explanation-box hidden"></div>
+
+        <div class="options-list" id="optionsContainer"></div>
+
+        <div class="action-container">
+            <button id="btnCheck" class="btn btn-blue" onclick="checkAnswer()">KIỂM TRA ĐÁP ÁN</button>
+            <button id="btnNext" class="btn btn-blue hidden" onclick="nextQuestion()">CÂU TIẾP THEO →</button>
+        </div>
+    </div>
+
+    <div id="stepResult" class="card hidden">
+        <div class="step-title" style="text-align: center;">🎉 Kết Quả Làm Bài</div>
+        <div id="scoreResult" class="score-text">Bạn đạt được: 0/0 câu</div>
+        <button class="btn btn-blue" onclick="backToSelect()">LÀM LẠI BÀI MỚI</button>
+    </div>
+</div>
+
+<script>
+    
+    let dbQuestions = window.dbQuestions || [];
+    let categories = [];
+    let selectedCategories = [];
+    let filteredQuestions = [];
+    let currentQuestionIndex = 0;
+    let selectedAnswer = null;
+    let totalCorrect = 0;
+    let isAnswerChecked = false;
+
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (dbQuestions.length === 0) {
+            document.getElementById('filterContainer').innerHTML = 
+                `<p style="color: red; font-weight: bold;">Lỗi: Không tìm thấy file dữ liệu 'quiz_data.js' đặt cùng thư mục!</p>`;
+            return;
+        }
+        
+        categories = [...new Set(dbQuestions.map(q => q.category))];
+        initFilters();
+    });
+
+    function initFilters() {
+        const filterContainer = document.getElementById('filterContainer');
+        filterContainer.innerHTML = '';
+        selectedCategories = [];
+        
+        categories.forEach(cat => {
+            const label = document.createElement('label');
+            label.className = 'checkbox-item';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = cat;
+            checkbox.addEventListener('change', (e) => {
+                if (e.target.checked) selectedCategories.push(cat);
+                else selectedCategories = selectedCategories.filter(item => item !== cat);
+            });
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(cat));
+            filterContainer.appendChild(label);
+        });
+    }
+
+    function startQuiz() {
+        if (dbQuestions.length === 0) return;
+        if (selectedCategories.length === 0) {
+            alert("Vui lòng tích chọn ít nhất 1 thể loại!");
+            return;
+        }
+        filteredQuestions = dbQuestions.filter(q => selectedCategories.includes(q.category));
+        currentQuestionIndex = 0;
+        totalCorrect = 0;
+
+        document.getElementById('stepSelectCategory').classList.add('hidden');
+        document.getElementById('stepResult').classList.add('hidden');
+        document.getElementById('stepShowQuiz').classList.remove('hidden');
+
+        showQuestion();
+    }
+
+    function showQuestion() {
+        selectedAnswer = null;
+        isAnswerChecked = false;
+        
+        const expBox = document.getElementById('explanationBox');
+        expBox.classList.add('hidden');
+        expBox.classList.remove('checked-info');
+
+        const btnHint = document.getElementById('btnToggleHint');
+        btnHint.disabled = false;
+        btnHint.innerHTML = `💡 Xem gợi ý`;
+
+        document.getElementById('btnCheck').classList.remove('hidden');
+        document.getElementById('btnNext').classList.add('hidden');
+
+        const currentQuestion = filteredQuestions[currentQuestionIndex];
+        
+        document.getElementById('quizCategoryTag').innerText = currentQuestion.category;
+        document.getElementById('progressText').innerText = `Câu hỏi: ${currentQuestionIndex + 1}/${filteredQuestions.length}`;
+        
+        const pct = ((currentQuestionIndex + 1) / filteredQuestions.length) * 100;
+        document.getElementById('progressFill').style.width = `${pct}%`;
+
+        document.getElementById('questionText').innerText = `Câu ${currentQuestionIndex + 1}: ${currentQuestion.question_text}`;
+        expBox.innerHTML = `<strong>💡 Gợi ý làm bài:</strong> ${currentQuestion.explanation}`;
+
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+
+        const options = [
+            { key: 'A', value: currentQuestion.answer_a },
+            { key: 'B', value: currentQuestion.answer_b },
+            { key: 'C', value: currentQuestion.answer_c },
+            { key: 'D', value: currentQuestion.answer_d }
+        ];
+
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.id = `opt-${opt.key}`;
+            btn.innerText = `${opt.key}. ${opt.value}`;
+            btn.onclick = () => {
+                if (isAnswerChecked) return;
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedAnswer = opt.key;
+            };
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function toggleHint() {
+        if (isAnswerChecked) return; 
+        const expBox = document.getElementById('explanationBox');
+        const btnHint = document.getElementById('btnToggleHint');
+        if (expBox.classList.contains('hidden')) {
+            expBox.classList.remove('hidden');
+            btnHint.innerHTML = `🙈 Ẩn gợi ý`;
+        } else {
+            expBox.classList.add('hidden');
+            btnHint.innerHTML = `💡 Xem gợi ý`;
+        }
+    }
+
+    function checkAnswer() {
+        if (!selectedAnswer) {
+            alert("Vui lòng chọn một đáp án trước khi kiểm tra!");
+            return;
+        }
+
+        isAnswerChecked = true;
+        const currentQuestion = filteredQuestions[currentQuestionIndex];
+        const correct = currentQuestion.correct_answer;
+
+        document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+
+        if (selectedAnswer === correct) {
+            document.getElementById(`opt-${selectedAnswer}`).classList.add('correct');
+            totalCorrect++;
+        } else {
+            document.getElementById(`opt-${selectedAnswer}`).classList.add('wrong');
+            document.getElementById(`opt-${correct}`).classList.add('correct');
+        }
+
+        const btnHint = document.getElementById('btnToggleHint');
+        btnHint.disabled = true;
+        btnHint.innerHTML = `💡 Xem gợi ý`;
+
+        const expBox = document.getElementById('explanationBox');
+        expBox.classList.add('checked-info');
+        expBox.innerHTML = `<strong>🔑 Kết quả: Đáp án đúng là ${correct}</strong><br><small>Giải thích: ${currentQuestion.explanation}</small>`;
+        expBox.classList.remove('hidden');
+
+        document.getElementById('btnCheck').classList.add('hidden');
+        document.getElementById('btnNext').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < filteredQuestions.length) {
+            showQuestion();
+        } else {
+            document.getElementById('stepShowQuiz').classList.add('hidden');
+            document.getElementById('stepResult').classList.remove('hidden');
+            document.getElementById('scoreResult').innerText = `Bạn đã hoàn thành chính xác: ${totalCorrect}/${filteredQuestions.length} câu hỏi!`;
+        }
+    }
+
+    function backToSelect() {
+        document.getElementById('stepShowQuiz').classList.add('hidden');
+        document.getElementById('stepResult').classList.add('hidden');
+        document.getElementById('stepSelectCategory').classList.remove('hidden');
+        initFilters();
+    }
+</script>
+
+</body>
+</html>
